@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Fiche de visite Elidiag</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icone-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#185fa5">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Fiche visite">
+<style>
+:root{--bg:#f4f3ef;--card:#fff;--line:rgba(0,0,0,.1);--line2:rgba(0,0,0,.2);--tx:#1f1e1c;--tx2:#6b6a65;--tx3:#9a9993;
+--ac:#185fa5;--acbg:#e6f1fb;--ok:#3b6d11;--okbg:#eaf3de;--ko:#a32d2d;--kobg:#fcebeb;--wa:#854f0b;--wabg:#faeeda;--r:10px}
+@media (prefers-color-scheme:dark){:root{--bg:#1c1c1a;--card:#262624;--line:rgba(255,255,255,.1);--line2:rgba(255,255,255,.22);--tx:#f1efe8;--tx2:#b4b2a9;--tx3:#888780;
+--ac:#85b7eb;--acbg:#0c447c;--ok:#97c459;--okbg:#27500a;--ko:#f09595;--kobg:#791f1f;--wa:#fac775;--wabg:#633806}}
+*{box-sizing:border-box}
+html,body{-webkit-text-size-adjust:100%;overflow-x:hidden;width:100%;max-width:100%;overscroll-behavior:none}
+body{position:relative;touch-action:pan-y;margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 system-ui,-apple-system,sans-serif}
+main{max-width:640px;margin:0 auto;padding:calc(16px + env(safe-area-inset-top)) 14px 0}
+h1{font-size:20px;font-weight:500;margin:0}
+.muted{color:var(--tx2);font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:10px}
+.sub{border-left:2px solid var(--ac);padding:4px 0 4px 12px;margin:10px 0 4px}
+.sec{display:flex;align-items:center;gap:8px;margin:22px 0 10px;font-weight:500}
+.sec i{width:26px;height:26px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-style:normal;font-size:12px;background:var(--kobg);color:var(--ko)}
+.sec.done i{background:var(--okbg);color:var(--ok)}
+.row{display:grid;grid-template-columns:104px minmax(0,1fr);gap:8px;align-items:center;margin:7px 0}
+.val{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.line{display:flex;gap:6px;align-items:center;margin:6px 0}
+.lab{font-size:13px;color:var(--tx2)}
+.chip{border:1px solid var(--line2);background:var(--card);color:var(--tx);border-radius:8px;padding:6px 10px;font:inherit;font-size:13px;cursor:pointer}
+.chip.on{background:var(--acbg);color:var(--ac);border-color:var(--ac)}
+input,select{font:inherit;font-size:16px;max-width:100%;color:var(--tx);background:var(--card);border:1px solid var(--line2);border-radius:8px;padding:7px 9px;width:100%}
+input.n{width:106px}
+select{appearance:auto;padding:7px 6px}
+select.vide{color:var(--tx3)}
+.zone{display:grid;grid-template-columns:62px minmax(0,1fr) minmax(0,1fr);gap:6px;align-items:start;margin:6px 0}
+.zone>div{display:flex;flex-direction:column;gap:4px}
+.zone select{font-size:16px;padding:7px 4px}
+.piece{border-top:1px solid var(--line);padding-top:10px;margin-top:10px}
+.piece:first-child{border-top:none;margin-top:0;padding-top:0}
+.b{font:inherit;font-size:14px;border:1px solid var(--line2);background:var(--card);color:var(--tx);border-radius:var(--r);padding:9px 12px;cursor:pointer}
+a.wa{display:block;text-align:center;text-decoration:none;background:#25d366;color:#fff;border-color:#25d366}
+button.p{background:var(--ac);color:var(--card);border-color:var(--ac)}
+button.x{border:none;background:none;color:var(--tx3);cursor:pointer;font-size:13px;padding:4px}
+.tag{font-size:11px;background:var(--wabg);color:var(--wa);padding:2px 7px;border-radius:6px}
+.bar{height:6px;background:var(--line);border-radius:3px;margin:10px 0 4px}
+.bar div{height:6px;background:var(--ac);border-radius:3px;transition:width .3s}
+.badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.badge{font-size:12px;padding:3px 8px;border-radius:6px;background:var(--line);color:var(--tx3)}
+.badge.on{background:var(--okbg);color:var(--ok)}
+.foot{position:sticky;bottom:0;margin:16px -14px 0;background:var(--card);border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom))}
+.foot>div{max-width:640px;margin:0 auto;display:flex;gap:8px;align-items:center}
+.item{display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.note{background:var(--wabg);color:var(--wa);border-radius:var(--r);padding:10px 12px;font-size:13px;margin:10px 0}
+.err{background:var(--kobg);color:var(--ko);border-radius:var(--r);padding:10px 12px;font-size:13px;margin:10px 0}
+.toast{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top));transform:translateX(-50%);background:var(--ok);color:var(--card);padding:8px 14px;border-radius:var(--r);font-size:14px;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.on{opacity:1}
+pre{white-space:pre-wrap;font:14px/1.6 system-ui,-apple-system,sans-serif;margin:0}
+</style>
+</head>
+<body>
+<main id="app"><p class="muted">Chargement…</p></main>
+<div class="toast" id="toast"></div>
+<script>
+const OPT={
+  type:['Appartement','Maison'],
+  niveau:['RDC','1er',...Array.from({length:14},(_,i)=>`${i+2}e`)],
+  vent:['Ouverture des fenêtres','Entrées d\'air hautes et basses','VMC autoréglable','VMC Hygro A','VMC Hygro B','Double flux','Autre'],
+  ventAn:['Avant 2001','2001-2012','Après 2012'],
+  chMode:['Individuel','Collectif'],
+  chEn:['Électricité','Gaz','Fioul','Bois','PAC'],
+  emet:['Radiateurs bitube','Radiateurs monotube','Convecteurs électriques','Panneaux rayonnants','Radiateurs à inertie','Plancher chauffant','Poêle','Autre'],
+  robinet:['Avec robinet thermo','Sans robinet thermo'],
+  ecs:['Ballon électrique','Chaudière','Thermodynamique','Collective','Chauffe-eau gaz'],
+  pos:['Vertical','Horizontal'],
+  cat:['Pas de catégorie (chauffe-eau électrique)','Catégorie B','Catégorie C'],
+  vol:['Dans volume chauffé','Hors volume chauffé'],
+  clim:['Aucune','Climatisation'],
+  orient:['Nord','Sud','Est','Ouest'],
+  cote:['Extérieur','Local chauffé','Circulation sans ouverture directe sur l\'extérieur','Circulation avec ouverture directe sur l\'extérieur','Circulation avec désenfumage ouvert en permanence','Hall d\'entrée avec fermeture automatique','Hall d\'entrée sans fermeture automatique','Garage','Garage privé collectif','Cellier','Sous-sol non chauffé','Local non chauffé non accessible','Véranda / espace tampon solarisé','Autres dépendances','Local à usage autre que d\'habitation','Paroi enterrée','Autre'],
+  mat:['Pierre de taille / moellons','Pierre avec remplissage tout venant','Pisé / béton de terre','Briques pleines simples','Briques pleines doubles avec lame d\'air','Briques creuses','Brique terre cuite alvéolaire','Blocs béton pleins','Blocs béton creux (parpaing)','Béton banché','Béton de mâchefer','Béton cellulaire','Sandwich béton / isolant / béton','Pan de bois','Ossature bois','Bois (rondins)','Cloison de plâtre','Inconnu','Autre'],
+  iso:['Non isolé','ITI','ITE','ITR (isolation répartie)','ITI + ITE','Isolé (type inconnu)','Inconnue'],
+  doub:['Non doublé','Doublage < 15 mm','Doublage ≥ 15 mm'],
+  baie:['Fenêtre','Porte-fenêtre','Porte'],
+  bMat:['PVC','Bois','Alu','Métal'],
+  ouv:['Battante','Coulissante','Fixe'],
+  vit:['Simple','Double','Triple'],
+  gaz:['Air','Argon'],
+  volet:['Aucun','Jalousie métal','Roulant PVC','Roulant alu','Persienne bois','Battant bois'],
+  porte:['Opaque pleine','Vitrée < 30 %','Vitrée 30-60 %','Isolée'],
+  pb:['Local chauffé','Cave','Vide sanitaire','Terre-plein','Parking','Autre local non chauffé'],
+  ph:['Local chauffé','Combles perdus','Rampants','Toiture terrasse','Local non chauffé'],
+  isoS:['Non isolé','Isolé','Inconnue'],
+  gazInst:['Pas de gaz','Installation gaz'],
+  sub:['Plâtre','Plaque de plâtre','Béton','Brique','Parpaing','Pierre','Bois','Métal','Chape ciment','Autre'],
+  rev:['Peinture','Enduit + peinture','Papier peint','Toile de verre','Faïence','Carrelage','Parquet','Stratifié','Moquette','Lino / PVC','Lambris','Crépi','Aucun (brut)','Autre'],
+  elt:['Fenêtre','Porte','Huisserie','Plinthes','Garde-corps','Volets','Radiateur','Canalisation','Autre']
+};
+const LNC_PB=['Cave','Parking','Autre local non chauffé'];
+const SANS_S=['','Extérieur','Local chauffé','Paroi enterrée','Local à usage autre que d\'habitation'];
+const isoOk=x=>x&&x!=='Non isolé'&&x!=='Inconnue';
+const TAGS={'brouillon':['Brouillon',''],'envoyée':['Envoyée','background:var(--okbg);color:var(--ok)'],'incomplète':['Envoyée incomplète','background:var(--kobg);color:var(--ko)']};
+const tagStatut=st=>{const [t,c]=TAGS[st]||TAGS.brouillon;return `<span class="tag" style="${c}">${t}</span>`};
+// Numéro WhatsApp du bureau au format international sans + (ex. 33612345678) ; vide = choisir le contact dans WhatsApp
+const WA_BUREAU='';
+// Lien qui ouvre directement l'application WhatsApp, sans passer par le web : fonctionne sans réseau, le message part quand le réseau revient
+const lienWa=t=>`whatsapp://send?${WA_BUREAU?'phone='+WA_BUREAU+'&':''}text=${encodeURIComponent(t)}`;
+const RADS=['Radiateurs bitube','Radiateurs monotube'];
+const ABR={'Fenêtre':'Fe','Porte-fenêtre':'PFE'};
+function nomOuv(m,k){const b=m.baies[k];if(!b.type)return `Ouverture ${k+1}`;const tout=v.murs.flatMap(x=>x.baies),same=tout.filter(x=>x.type===b.type),n=same.indexOf(b)+1;
+  return b.type==='Porte'?(same.length>1?`Porte ${n}`:'Porte'):`${ABR[b.type]} ${n}`}
+const SECTIONS=[['gen','Général'],['pie','Pièces'],['equ','Équipements'],['mur','Murs'],['pb','Plancher bas'],['ph','Plafond'],['aut','Autres diagnostics']];
+const CLE='elidiag-visites';
+const installee=matchMedia('(display-mode: standalone)').matches||navigator.standalone;
+
+let visites=[],v=null,view='liste',saveTimer=null,lastDone=new Set();
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const get=(o,p)=>p.split('.').reduce((a,k)=>a==null?a:a[k],o);
+function set(o,p,val){const ks=p.split('.');const last=ks.pop();const t=ks.reduce((a,k)=>a[k],o);t[last]=val}
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');setTimeout(()=>e.classList.remove('on'),2200)}
+
+function vide(){return{id:'v'+Date.now(),cree:new Date().toISOString(),statut:'brouillon',client:'',mail:'',logement:'',adresse:'',type:'',niveau:'',
+  pieces:[piece()],hsp:'',vent:'',ventAn:'',chMode:'',chEn:'',chGen:'',chAn:'',emet:'',robinet:'',
+  ecs:'',ecsVol:'',ecsAn:'',ecsPos:'',ecsCat:'',ecsLieu:'',clim:'',murs:[],pb:'',pbIso:'',pbSch:'',pbSext:'',ph:'',phIso:'',phEp:'',
+  plomb:'',gazInst:'',gaz:'',elec:'',amiante:''}}
+const ZONES=[['sol','Sol'],['mur','Murs'],['plafond','Plafond']];
+function piece(){return{nom:'',surface:'',zones:{sol:{sub:'',rev:''},mur:{sub:'',rev:''},plafond:{sub:'',rev:''}},elts:[]}}
+function norm(x){x=Object.assign(vide(),x);x.pieces=(x.pieces||[]).map(p=>{const n=Object.assign(piece(),p);n.zones=Object.assign(piece().zones,p.zones||{});return n});return x}
+function mur(){return{orient:'',cote:'',long:'',mat:'',ep:'',doub:'',iso:'',epIso:'',sch:'',sext:'',baies:[]}}
+function baie(){return{type:'',mat:'',ouv:'',L:'',H:'',vit:'',lame:'',gaz:'',volet:'',masque:'',porte:''}}
+
+const chips=(k,opts)=>{const c=get(v,k);if(opts.length<=2)return opts.map(o=>`<button class="chip${c===o?' on':''}" data-k="${k}" data-v="${esc(o)}">${esc(o)}</button>`).join('');
+  return `<select data-k="${k}" class="${c?'':'vide'}"><option value="">Choisir…</option>${opts.map(o=>`<option${c===o?' selected':''}>${esc(o)}</option>`).join('')}</select>`+(c==='Autre'?inp(k+'X','Préciser'):'')};
+const val=k=>get(v,k)==='Autre'?get(v,k+'X')||'Autre':get(v,k);
+const inp=(k,ph,cls='')=>`<input class="${cls}" data-k="${k}" value="${esc(get(v,k))}" placeholder="${esc(ph)}"${cls==='n'?' inputmode="decimal"':cls==='m'?' type="email" inputmode="email" autocapitalize="off"':''}>`;
+const row=(lab,html)=>`<div class="row"><span class="lab">${lab}</span><div class="val">${html}</div></div>`;
+
+function manques(){
+  const r={gen:[],pie:[],equ:[],mur:[],pb:[],ph:[],aut:[]};
+  if(!v.client.trim())r.gen.push('Nom du client');
+  if(!v.logement.trim())r.gen.push('Logement');
+  if(!v.type)r.gen.push('Type de bien');
+  if(!v.pieces.some(p=>p.nom.trim()&&p.surface.trim()))r.pie.push('Au moins une pièce avec surface');
+  if(!v.hsp.trim())r.equ.push('HSP');
+  if(!v.vent)r.equ.push('Ventilation');
+  if(v.vent.startsWith('VMC')&&!v.ventAn)r.equ.push('Année VMC');
+  if(!v.chMode)r.equ.push('Chauffage individuel ou collectif');
+  if(v.chMode==='Individuel'){if(!v.chEn)r.equ.push('Énergie chauffage');if(!v.chGen.trim())r.equ.push('Générateur');if(!v.chAn.trim())r.equ.push('Année générateur')}
+  if(!v.emet)r.equ.push('Émetteurs');
+  if(RADS.includes(v.emet)&&!v.robinet)r.equ.push('Robinets thermostatiques');
+  ['vent','emet'].forEach(k=>{if(v[k]==='Autre'&&!(v[k+'X']||'').trim())r.equ.push('Préciser « Autre »')});
+  if(!v.ecs)r.equ.push('Eau chaude sanitaire');
+  if(v.ecs==='Ballon électrique'||v.ecs==='Thermodynamique'){if(!v.ecsVol.trim())r.equ.push('Volume ballon');if(!v.ecsAn.trim())r.equ.push('Année ballon');if(!v.ecsPos)r.equ.push('Position ballon');if(v.ecs==='Ballon électrique'&&!v.ecsCat)r.equ.push('Catégorie ballon');if(!v.ecsLieu)r.equ.push('Emplacement ballon')}
+  if(!v.clim)r.equ.push('Climatisation');
+  if(!v.murs.length)r.mur.push('Au moins un mur extérieur ou sur local non chauffé');
+  v.murs.forEach((m,i)=>{const n=`Mur ${i+1}`;
+    if(!m.orient)r.mur.push(`${n} : orientation`);if(!m.cote)r.mur.push(`${n} : donne sur`);if(!m.long.trim())r.mur.push(`${n} : longueur`);
+    if(!m.mat)r.mur.push(`${n} : matériau`);if(!m.iso)r.mur.push(`${n} : isolation`);
+    if(isoOk(m.iso)&&!(m.epIso||'').trim())r.mur.push(`${n} : épaisseur isolant`);
+    if(m.mat==='Autre'&&!(m.matX||'').trim())r.mur.push(`${n} : préciser le matériau`);if(m.cote==='Autre'&&!(m.coteX||'').trim())r.mur.push(`${n} : préciser « donne sur »`);
+    if(!SANS_S.includes(m.cote)){if(!m.sch.trim())r.mur.push(`${n} : S.CHAUFF`);if(!m.sext.trim())r.mur.push(`${n} : S.EXT`)}
+    m.baies.forEach((b,j)=>{const bn=`${n}, ${nomOuv(m,j)}`;
+      if(!b.type)r.mur.push(`${bn} : type`);if(!b.mat)r.mur.push(`${bn} : matériau`);if(!b.L.trim()||!b.H.trim())r.mur.push(`${bn} : dimensions`);
+      if(b.type==='Porte'){if(!b.porte)r.mur.push(`${bn} : type de porte`)}
+      else if(b.type){if(!b.ouv)r.mur.push(`${bn} : ouverture`);if(!b.vit)r.mur.push(`${bn} : vitrage`);
+        if(b.vit&&b.vit!=='Simple'){if(!b.lame.trim())r.mur.push(`${bn} : lame d'air`);if(!b.gaz)r.mur.push(`${bn} : remplissage`)}
+        if(!b.volet)r.mur.push(`${bn} : volet`)}})});
+  if(!v.pb)r.pb.push('Plancher bas');
+  if(v.pb&&v.pb!=='Local chauffé'&&!v.pbIso)r.pb.push('Isolation plancher');
+  if(LNC_PB.includes(v.pb)){if(!v.pbSch.trim())r.pb.push('SCH plancher');if(!v.pbSext.trim())r.pb.push('SEXT plancher')}
+  if(!v.ph)r.ph.push('Plafond');
+  if(v.ph&&v.ph!=='Local chauffé'&&!v.phIso)r.ph.push('Isolation plafond');
+  if(!v.gazInst)r.aut.push('Gaz');
+  if(!v.plomb.trim())r.aut.push('Plomb (RAS si rien)');
+  if(!v.elec.trim())r.aut.push('Électricité (RAS si rien)');
+  return r;
+}
+function bureau(){
+  const t=['Année de construction'];
+  if(v.chMode==='Collectif')t.push('Chauffage collectif : énergie, chaudière, année, comptage individuel');
+  if(v.ecs==='Collective')t.push('ECS collective : énergie, production, année');
+  return t;
+}
+
+function render(){
+  if(view==='liste')return renderListe();
+  if(view==='recap')return renderRecap();
+  renderVisite();
+}
+function renderListe(){
+  const l=[...visites].sort((a,b)=>(b.cree||'').localeCompare(a.cree||''));
+  $('#app').innerHTML=`<h1>Fiches de visite</h1><p class="muted">Elidiag France · relevé terrain DPE et diagnostics</p>
+  ${installee?'':`<div class="note"><b style="font-weight:500">Pour l'utiliser sans réseau, installe-la une fois :</b><br>iPhone (Safari) : bouton Partager › « Sur l'écran d'accueil ».<br>Android (Chrome) : menu ⋮ › « Ajouter à l'écran d'accueil ».<br>Ouvre-la ensuite depuis l'icône.</div>`}
+  <button class="b p" id="nouv" style="width:100%;margin:12px 0 16px">+ Nouvelle visite</button>
+  ${l.length?l.map(x=>`<div class="card item" data-id="${esc(x.id)}"><div><b style="font-weight:500">${esc(x.client||'Sans nom')}</b><br><span class="muted">${esc(x.logement)} · ${new Date(x.cree).toLocaleDateString('fr-FR')}</span></div>
+  ${tagStatut(x.statut)}</div>`).join('')
+  :'<div class="card muted">Aucune visite pour l\'instant. Lance la première avec le bouton ci-dessus.</div>'}
+  <p class="muted" style="margin-top:14px">Les visites sont gardées sur ce téléphone uniquement. Ne supprime pas l'application tant qu'une visite n'est pas envoyée au bureau.</p>`;
+}
+function renderVisite(){
+  const m=manques(),all=Object.values(m).flat(),done=SECTIONS.filter(([k])=>!m[k].length);
+  const sec=(k,t)=>`<div class="sec${m[k].length?'':' done'}" id="s-${k}"><i>${m[k].length?m[k].length:'✓'}</i>${t}</div>`;
+  let h=`<div class="item"><button class="x" id="retour">← Visites</button>${tagStatut(v.statut)}</div>
+  <h1 style="margin-top:6px">${esc(v.client||'Nouvelle visite')}</h1><span class="muted">${esc(v.logement)}</span>
+  <div class="bar"><div id="pbar" style="width:${Math.round(done.length/SECTIONS.length*100)}%"></div></div>
+  <div class="badges" id="badges">${SECTIONS.map(([k,t])=>`<span class="badge${m[k].length?'':' on'}">${m[k].length?'':'✓ '}${t}</span>`).join('')}</div>`;
+
+  h+=sec('gen','Général')+`<div class="card">${row('Client',inp('client','Laforet Diane'))}${row('Mail',inp('mail','client@mail.fr','m'))}${row('Logement',inp('logement','RDC porte gauche'))}${row('Adresse',inp('adresse','12 rue…'))}
+  ${row('Type',chips('type',OPT.type))}${v.type==='Appartement'?row('Étage',chips('niveau',OPT.niveau)):''}</div>`;
+
+  const sel=(k,o,ph)=>{const c=get(v,k);return `<select data-k="${k}" class="${c?'':'vide'}"><option value="">${ph}</option>${o.map(x=>`<option${c===x?' selected':''}>${esc(x)}</option>`).join('')}</select>`+(c==='Autre'?inp(k+'X','Préciser'):'')};
+  h+=sec('pie','Pièces')+`<p class="muted" style="margin-top:-4px">Une carte par pièce : surface puis substrat / revêtement. Croquis : envoie la photo à part sur WhatsApp.</p><div class="card">${v.pieces.map((p,i)=>{const q=`pieces.${i}`;
+    return `<div class="piece"><div class="line">${inp(q+'.nom','Séjour')}${inp(q+'.surface','m²','n')}</div>
+    ${ZONES.map(([z,t])=>`<div class="zone"><span class="lab" style="padding-top:9px">${t}</span><div>${sel(`${q}.zones.${z}.sub`,OPT.sub,'Substrat')}</div><div>${sel(`${q}.zones.${z}.rev`,OPT.rev,'Revêtement')}</div></div>`).join('')}
+    ${p.elts.map((e,k)=>`<div class="line" style="margin-top:10px">${sel(`${q}.elts.${k}.elt`,OPT.elt,'Élément')}<button class="x" data-del="${q}.elts.${k}">✕</button></div><div class="zone" style="margin-top:0"><span></span><div>${sel(`${q}.elts.${k}.sub`,OPT.sub,'Substrat')}</div><div>${sel(`${q}.elts.${k}.rev`,OPT.rev,'Revêtement')}</div></div>`).join('')}
+    <div class="item"><button class="x" data-add="${q}.elts">+ Autre élément</button><span><button class="x" data-dup="${q}">Dupliquer</button><button class="x" data-del="${q}">Supprimer</button></span></div></div>`}).join('')}
+  <button class="b" data-add="pieces">+ Pièce</button></div>`;
+
+  h+=sec('equ','Équipements')+`<div class="card">${row('HSP (m)',inp('hsp','2,50','n'))}
+  ${row('Ventilation',chips('vent',OPT.vent))}${v.vent.startsWith('VMC')?row('Année VMC',chips('ventAn',OPT.ventAn)):''}
+  ${row('Chauffage',chips('chMode',OPT.chMode)+(v.chMode==='Collectif'?' <span class="tag">bureau</span>':''))}
+  ${v.chMode==='Individuel'?row('Énergie',chips('chEn',OPT.chEn))+row('Générateur',inp('chGen','Chaudière condensation, marque…'))+row('Année',inp('chAn','2015','n')):''}
+  ${row('Émetteurs',chips('emet',OPT.emet))}${RADS.includes(v.emet)?row('Robinets',chips('robinet',OPT.robinet)):''}
+  ${row('Eau chaude',chips('ecs',OPT.ecs)+(v.ecs==='Collective'?' <span class="tag">bureau</span>':''))}
+  ${v.ecs==='Ballon électrique'||v.ecs==='Thermodynamique'?row('Ballon',inp('ecsVol','Litres','n')+inp('ecsAn','Année','n'))+row('Position',chips('ecsPos',OPT.pos))+(v.ecs==='Ballon électrique'?row('Catégorie',chips('ecsCat',OPT.cat)):'')+row('Emplacement',chips('ecsLieu',OPT.vol)):''}
+  ${row('Clim',chips('clim',OPT.clim))}</div>`;
+
+  h+=sec('mur','Murs')+`<p class="muted" style="margin-top:-4px">Mur non saisi = donne sur un local chauffé.</p>`;
+  v.murs.forEach((w,i)=>{const p=`murs.${i}`;
+    h+=`<div class="card"><div class="item"><b style="font-weight:500">Mur ${i+1}${w.orient?' · '+esc(w.orient):''}</b><span><button class="x" data-dup="murs.${i}">Dupliquer</button><button class="x" data-del="murs.${i}">Supprimer</button></span></div>
+    ${row('Orientation',chips(p+'.orient',OPT.orient))}${row('Donne sur',chips(p+'.cote',OPT.cote))}
+    ${!SANS_S.includes(w.cote)?row('Surfaces',inp(p+'.sch','S.CHAUFF m²','n')+inp(p+'.sext','S.EXT m²','n')):''}
+    ${row('Longueur (m)',inp(p+'.long','3,08','n'))}${row('Matériau',chips(p+'.mat',OPT.mat))}${row('Épaisseur mur',inp(p+'.ep','cm','n'))}
+    ${row('Doublage',chips(p+'.doub',OPT.doub))}${row('Isolation',chips(p+'.iso',OPT.iso))}${isoOk(w.iso)?row('Ép. isolant',inp(p+'.epIso','cm','n')):''}`;
+    w.baies.forEach((b,j)=>{const q=`${p}.baies.${j}`;
+      h+=`<div class="sub"><div class="item"><span class="muted">${nomOuv(w,j)}</span><span><button class="x" data-dup="${q}">Dupliquer</button><button class="x" data-del="${q}">✕</button></span></div>
+      ${row('Type',chips(q+'.type',OPT.baie))}${row('Matériau',chips(q+'.mat',OPT.bMat))}${row('Dimensions',inp(q+'.L','L (m)','n')+inp(q+'.H','H (m)','n'))}
+      ${b.type==='Porte'?row('Porte',chips(q+'.porte',OPT.porte)):b.type?row('Ouverture',chips(q+'.ouv',OPT.ouv))+row('Vitrage',chips(q+'.vit',OPT.vit))
+        +(b.vit&&b.vit!=='Simple'?row('Lame d\'air',inp(q+'.lame','mm','n'))+row('Remplissage',chips(q+'.gaz',OPT.gaz)):'')
+        +row('Volet',chips(q+'.volet',OPT.volet))+row('Masque',inp(q+'.masque','Lointain non homogène, 40°')):''}</div>`});
+    h+=`<button class="b" data-add="${p}.baies" style="margin-top:8px">+ Fenêtre / porte</button></div>`});
+  h+=`<button class="b" data-add="murs" style="width:100%">+ Ajouter un mur</button>`;
+
+  h+=sec('pb','Plancher bas')+`<div class="card">${row('Donne sur',chips('pb',OPT.pb))}
+  ${v.pb&&v.pb!=='Local chauffé'?row('Isolation',chips('pbIso',OPT.isoS)):''}${LNC_PB.includes(v.pb)?row('Surfaces',inp('pbSch','SCH m²','n')+inp('pbSext','SEXT m²','n')):''}</div>`;
+  h+=sec('ph','Plafond')+`<div class="card">${row('Donne sur',chips('ph',OPT.ph))}
+  ${v.ph&&v.ph!=='Local chauffé'?row('Isolation',chips('phIso',OPT.isoS))+(v.phIso==='Isolé'?row('Épaisseur',inp('phEp','cm','n')):''):''}</div>`;
+
+  h+=sec('aut','Autres diagnostics')+`<div class="card">${row('Plomb',inp('plomb','Garde-corps fenêtre séjour, ou RAS'))}
+  ${row('Gaz',chips('gazInst',OPT.gazInst))}${v.gazInst==='Installation gaz'?row('Détail gaz',inp('gaz','Anomalies…')):''}
+  ${row('Électricité',inp('elec','B4.3 j1 sans objet, ou RAS'))}${row('Amiante',inp('amiante','Repérages, ou RAS'))}</div>`;
+
+  h+=`<div class="note"><b style="font-weight:500">À rechercher par le bureau</b><br>${bureau().map(esc).join('<br>')}</div>`;
+  h+=`<div id="manq">${all.length?`<div class="err"><b style="font-weight:500">${all.length} info${all.length>1?'s':''} manquante${all.length>1?'s':''}</b><br>${all.slice(0,12).map(esc).join('<br>')}${all.length>12?'<br>…':''}</div>`:''}</div>`;
+  $('#app').innerHTML=h+`<div class="foot"><div><span class="muted" id="etat" style="flex:1"></span>
+  <button class="b" id="recap">Récap Liciel</button><button class="b p" id="envoi">Envoyer au bureau</button></div></div>`;
+  majEtat();
+  done.forEach(([k,t])=>{if(!lastDone.has(k)&&lastDone.size)toast('Badge débloqué : '+t)});
+  lastDone=new Set(done.map(([k])=>k));if(!lastDone.size)lastDone.add('_');
+}
+function majProgress(){
+  const m=manques(),done=SECTIONS.filter(([k])=>!m[k].length).length;
+  $('#pbar').style.width=Math.round(done/SECTIONS.length*100)+'%';
+  SECTIONS.forEach(([k],i)=>{const s=$('#s-'+k),b=$('#badges').children[i],n=m[k].length;
+    s.classList.toggle('done',!n);s.querySelector('i').textContent=n||'✓';b.classList.toggle('on',!n);b.textContent=(n?'':'✓ ')+SECTIONS[i][1]});
+}
+function majEtat(){const e=$('#etat');if(e)e.textContent=saveTimer?'Enregistrement…':'Enregistré'}
+
+function texteLiciel(){
+  const L=[],j=a=>a.filter(Boolean).join(' · '),d=(e,k,x)=>x&&L.push(`${e} ${k} : ${x}`),T=t=>L.push('',`*${t}*`);
+  const w=(o,x)=>o[x]==='Autre'?o[x+'X']||'Autre':o[x];
+  const mq=Object.values(manques()).flat();
+  L.push('📋 *FICHE DE VISITE ELIDIAG*',mq.length?`⚠️ Incomplète · ${mq.length} info${mq.length>1?'s':''} manquante${mq.length>1?'s':''}`:'✅ Fiche complète');
+  T('👤 CLIENT');d('▫️','Nom',v.client||'non renseigné');d('▫️','Mail',v.mail);d('▫️','Adresse',v.adresse||'non renseignée');d('▫️','Logement',v.logement);
+  d('▫️','Type',j([v.type,v.niveau&&(v.niveau==='RDC'?'RDC':'étage '+v.niveau)]));
+  if(mq.length){T('⚠️ À COMPLÉTER');mq.forEach(x=>L.push('❌ '+x))}
+  T('🏠 PIÈCES ET REVÊTEMENTS');d('↕️','HSP',v.hsp&&v.hsp+' m');v.pieces.filter(p=>p.nom.trim()).forEach(p=>{L.push('',`🛋️ *${p.nom}* · ${p.surface||'?'} m²`);
+    const sr=o=>[w(o,'sub'),w(o,'rev')].filter(Boolean).join(' / ');
+    [['🟫','Sol','sol'],['🧱','Murs','mur'],['⬜','Plafond','plafond']].forEach(([e,t,z])=>{const x=sr(p.zones[z]);if(x)L.push(`   ${e} ${t} : ${x}`)});
+    p.elts.forEach(o=>{const x=sr(o);if(o.elt||x)L.push(`   🔩 ${w(o,'elt')||'Élément'} : ${x}`)})});
+  T('🧱 MURS');L.push('_Mur non listé = local chauffé_');
+  if(!v.murs.length)L.push('Aucun');
+  v.murs.forEach((m,i)=>{L.push('',`🧱 *Mur ${i+1}${m.orient?' · '+m.orient:''}*`);d('   ➡️','Donne sur',w(m,'cote'));d('   📏','Longueur',m.long&&m.long+' m');
+    d('   🪨','Matériau',j([w(m,'mat'),m.ep&&m.ep+' cm']));d('   🧻','Doublage',m.doub);d('   🧥','Isolation',j([m.iso,isoOk(m.iso)&&m.epIso&&m.epIso+' cm']));
+    if(!SANS_S.includes(m.cote))L.push(`   📐 S.CHAUFF ${m.sch||'?'} m² · S.EXT ${m.sext||'?'} m²`);
+    m.baies.forEach((b,k)=>{const n=nomOuv(m,k);
+      if(b.type==='Porte')L.push('   '+j([`🚪 *${n}*`,[b.mat,b.porte].filter(Boolean).join(' '),b.L&&`${b.L} × ${b.H} m`]));
+      else L.push('   '+j([`🪟 *${n}*`,[b.ouv,b.mat].filter(Boolean).join(' '),b.L&&`${b.L} × ${b.H} m`,b.vit&&b.vit+(b.lame?' '+b.lame+' mm':'')+(b.gaz?' '+b.gaz:''),b.volet&&'volet '+b.volet,b.masque&&'masque '+b.masque]))})});
+  T('⬇️ PLANCHER BAS');L.push(j([v.pb,v.pbIso,v.pbSch&&`S.CHAUFF ${v.pbSch} m² · S.EXT ${v.pbSext||'?'} m²`])||'—');
+  T('⬆️ PLAFOND');L.push(j([v.ph,v.phIso,v.phEp&&v.phEp+' cm'])||'—');
+  T('🌀 VENTILATION');L.push(j([val('vent'),v.ventAn])||'—');
+  T('🔥 CHAUFFAGE');L.push(j([v.chMode,v.chEn,v.chGen,v.chAn])||'—');d('♨️','Émetteurs',j([val('emet'),v.robinet]));
+  T('🚿 EAU CHAUDE');L.push(j([v.ecs,v.ecsVol&&v.ecsVol+' L',v.ecsAn,v.ecsPos,v.ecsCat,v.ecsLieu])||'—');
+  T('❄️ CLIMATISATION');L.push(v.clim||'—');
+  T('🔎 AUTRES DIAGNOSTICS');d('🎨','Plomb',v.plomb);d('🔥','Gaz',j([v.gazInst,v.gaz]));d('⚡','Électricité',v.elec);d('🧯','Amiante',v.amiante);
+  T('📞 À RECHERCHER PAR LE BUREAU');bureau().forEach(t=>L.push('🔍 '+t));
+  return L.join('\n');
+}
+function renderRecap(){
+  $('#app').innerHTML=`<button class="x" id="versVisite">← Fiche</button><h1 style="margin:6px 0 12px">Récap Liciel</h1>
+  <p class="muted">Dans l'ordre de saisie Liciel. Relis le texte avant d'envoyer.</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px"><a class="b wa" href="${lienWa(texteLiciel())}">WhatsApp</a><button class="b" id="copier">Copier le texte</button></div>
+  <div class="card"><pre id="txt">${esc(texteLiciel()).replace(/\*([^*\n]+)\*/g,'<b style="font-weight:500">$1</b>').replace(/_([^_\n]+)_/g,'<i>$1</i>')}</pre></div>`;
+}
+
+function changer(){majProgress();const all=Object.values(manques()).flat();
+  $('#manq').innerHTML=all.length?`<div class="err"><b style="font-weight:500">${all.length} info${all.length>1?'s':''} manquante${all.length>1?'s':''}</b><br>${all.slice(0,12).map(esc).join('<br>')}${all.length>12?'<br>…':''}</div>`:'';planifier()}
+function planifier(){clearTimeout(saveTimer);saveTimer=setTimeout(sauver,900);majEtat()}
+function sauver(){
+  clearTimeout(saveTimer);saveTimer=null;
+  const i=visites.findIndex(x=>x.id===v.id);if(i<0)visites.push(v);else visites[i]=v;
+  try{localStorage.setItem(CLE,JSON.stringify(visites))}catch(e){toast('Enregistrement impossible : mémoire du téléphone pleine')}
+  majEtat();
+}
+
+document.addEventListener('click',async e=>{
+  const t=e.target.closest('button,.item[data-id],#waEnvoi');if(!t)return;
+  if(t.id==='nouv'){v=vide();lastDone=new Set();view='visite';visites.push(v);render();window.scrollTo(0,0);return}
+  if(t.dataset.id){v=norm(JSON.parse(JSON.stringify(visites.find(x=>x.id===t.dataset.id))));lastDone=new Set();view='visite';render();window.scrollTo(0,0);return}
+  if(t.id==='retour'){if(saveTimer)sauver();view='liste';render();return}
+  if(t.id==='recap'){view='recap';render();window.scrollTo(0,0);return}
+  if(t.id==='versVisite'){view='visite';render();return}
+  if(t.id==='copier'){try{await navigator.clipboard.writeText(texteLiciel());toast('Texte copié')}catch(err){toast('Copie refusée : sélectionne le texte')}return}
+  if(t.id==='envoi'){const all=Object.values(manques()).flat(),lien=`<a class="b wa" id="waEnvoi" href="${lienWa(texteLiciel())}">${all.length?'Envoyer quand même sur WhatsApp':'Envoyer au bureau sur WhatsApp'}</a>`;
+    $('#manq').innerHTML=all.length?`<div class="err"><b style="font-weight:500">${all.length} info${all.length>1?'s':''} manquante${all.length>1?'s':''}</b><br>${all.map(esc).join('<br>')}
+      <p style="margin:10px 0 8px">Impossible à relever sur place ? Le bureau recevra la visite marquée incomplète.</p>${lien}</div>`:`<div class="note">Fiche complète. Le récap s'ouvre dans WhatsApp, il ne reste qu'à appuyer sur Envoyer. Sans réseau, WhatsApp l'enverra dès que le réseau revient.</div>${lien}`;
+    $('#manq').scrollIntoView({behavior:'smooth'});return}
+  if(t.id==='waEnvoi'){const all=Object.values(manques()).flat();v.statut=all.length?'incomplète':'envoyée';v.manques=all;v.envoye=new Date().toISOString();sauver();return}
+  if(t.dataset.k){set(v,t.dataset.k,get(v,t.dataset.k)===t.dataset.v?'':t.dataset.v);const y=window.scrollY;render();window.scrollTo(0,y);planifier();return}
+  if(t.dataset.add){const a=get(v,t.dataset.add);a.push(t.dataset.add==='murs'?mur():t.dataset.add==='pieces'?piece():t.dataset.add.endsWith('.elts')?{elt:'',sub:'',rev:''}:baie());const y=window.scrollY;render();window.scrollTo(0,y);planifier();return}
+  if(t.dataset.dup){const ks=t.dataset.dup.split('.'),i=+ks.pop(),a=get(v,ks.join('.')),c=JSON.parse(JSON.stringify(a[i]));if(c.baies)c.baies=[];a.splice(i+1,0,c);const y=window.scrollY;render();window.scrollTo(0,y);planifier();toast(c.baies?'Mur dupliqué, sans ses fenêtres':c.zones?'Pièce dupliquée':'Ouverture dupliquée');return}
+  if(t.dataset.del){const ks=t.dataset.del.split('.'),i=+ks.pop();get(v,ks.join('.')).splice(i,1);const y=window.scrollY;render();window.scrollTo(0,y);planifier()}
+});
+document.addEventListener('input',e=>{
+  const t=e.target;
+  if(t.dataset.k){set(v,t.dataset.k,t.value);changer()}
+});
+document.addEventListener('change',e=>{
+  if(e.target.tagName==='SELECT'&&e.target.dataset.k){set(v,e.target.dataset.k,e.target.value);const y=window.scrollY;render();window.scrollTo(0,y);planifier()}
+});
+// Le téléphone peut mettre l'application en pause sans prévenir : on enregistre tout de suite
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&saveTimer)sauver()});
+
+try{visites=JSON.parse(localStorage.getItem(CLE)||'[]')}catch(e){visites=[]}
+render();
+// Demande au navigateur de ne jamais effacer les visites pour libérer de la place
+if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();
+if('serviceWorker' in navigator)navigator.serviceWorker.register('sw.js');
+</script>
+</body>
+</html>
