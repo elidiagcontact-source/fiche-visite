@@ -198,7 +198,7 @@ function renderListe(){
   ${installee?'':`<div class="note"><b style="font-weight:500">Pour l'utiliser sans réseau, installe-la une fois :</b><br>iPhone (Safari) : bouton Partager › « Sur l'écran d'accueil ».<br>Android (Chrome) : menu ⋮ › « Ajouter à l'écran d'accueil ».<br>Ouvre-la ensuite depuis l'icône.</div>`}
   <button class="b p" id="nouv" style="width:100%;margin:12px 0 16px">+ Nouvelle visite</button>
   ${l.length?l.map(x=>`<div class="card item" data-id="${esc(x.id)}"><div><b style="font-weight:500">${esc(x.client||'Sans nom')}</b><br><span class="muted">${esc(x.logement)} · ${new Date(x.cree).toLocaleDateString('fr-FR')}</span></div>
-  ${tagStatut(x.statut)}</div>`).join('')
+  <span style="display:flex;align-items:center;gap:4px">${tagStatut(x.statut)}<button class="x" data-suppr="${esc(x.id)}" aria-label="Supprimer la visite" style="font-size:18px;padding:6px 4px 6px 8px">🗑</button></span></div>`).join('')
   :'<div class="card muted">Aucune visite pour l\'instant. Lance la première avec le bouton ci-dessus.</div>'}
   <p class="muted" style="margin-top:14px">Les visites sont gardées sur ce téléphone uniquement. Ne supprime pas l'application tant qu'une visite n'est pas envoyée au bureau.</p>`;
 }
@@ -257,7 +257,6 @@ function renderVisite(){
 
   h+=`<div class="note"><b style="font-weight:500">À rechercher par le bureau</b><br>${bureau().map(esc).join('<br>')}</div>`;
   h+=`<div id="manq">${all.length?`<div class="err"><b style="font-weight:500">${all.length} info${all.length>1?'s':''} manquante${all.length>1?'s':''}</b><br>${all.slice(0,12).map(esc).join('<br>')}${all.length>12?'<br>…':''}</div>`:''}</div>`;
-  h+=`<button class="b" id="supprimer" style="width:100%;margin-top:18px;color:var(--ko);border-color:var(--ko)">Supprimer la visite</button>`;
   $('#app').innerHTML=h+`<div class="foot"><div><span class="muted" id="etat" style="flex:1"></span>
   <button class="b" id="recap">Récap Liciel</button><button class="b p" id="envoi">Envoyer au bureau</button></div></div>`;
   majEtat();
@@ -326,13 +325,13 @@ document.addEventListener('click',async e=>{
   if(t.id==='retour'){if(saveTimer)sauver();view='liste';render();return}
   if(t.id==='recap'){view='recap';render();window.scrollTo(0,0);return}
   if(t.id==='versVisite'){view='visite';render();return}
-  if(t.id==='supprimer'){
-    const avert=v.statut==='brouillon'?'\n\n⚠️ Attention : cette visite n\'a pas encore été envoyée au bureau.':'';
-    if(!confirm(`Supprimer définitivement la visite « ${v.client||'Sans nom'} » ?${avert}`))return;
-    clearTimeout(saveTimer);saveTimer=null;
-    visites=visites.filter(x=>x.id!==v.id);
+  if(t.dataset.suppr){
+    const x=visites.find(y=>y.id===t.dataset.suppr);
+    const avert=x.statut==='brouillon'?'\n\n⚠️ Attention : cette visite n\'a pas encore été envoyée au bureau.':'';
+    if(!confirm(`Supprimer définitivement la visite « ${x.client||'Sans nom'} » ?${avert}`))return;
+    visites=visites.filter(y=>y!==x);
     try{localStorage.setItem(CLE,JSON.stringify(visites))}catch(err){}
-    view='liste';render();window.scrollTo(0,0);toast('Visite supprimée');return}
+    render();toast('Visite supprimée');return}
   if(t.id==='copier'){try{await navigator.clipboard.writeText(texteLiciel());toast('Texte copié')}catch(err){toast('Copie refusée : sélectionne le texte')}return}
   if(t.id==='envoi'){const all=Object.values(manques()).flat(),lien=`<a class="b wa" id="waEnvoi" href="${lienWa(texteLiciel())}">${all.length?'Envoyer quand même sur WhatsApp':'Envoyer au bureau sur WhatsApp'}</a>`;
     $('#manq').innerHTML=all.length?`<div class="err"><b style="font-weight:500">${all.length} info${all.length>1?'s':''} manquante${all.length>1?'s':''}</b><br>${all.map(esc).join('<br>')}
