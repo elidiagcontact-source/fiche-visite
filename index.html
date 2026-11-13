@@ -257,6 +257,7 @@ function renderVisite(){
 
   h+=`<div class="note"><b style="font-weight:500">À rechercher par le bureau</b><br>${bureau().map(esc).join('<br>')}</div>`;
   h+=`<div id="manq">${all.length?`<div class="err"><b style="font-weight:500">${all.length} info${all.length>1?'s':''} manquante${all.length>1?'s':''}</b><br>${all.slice(0,12).map(esc).join('<br>')}${all.length>12?'<br>…':''}</div>`:''}</div>`;
+  h+=`<button class="b" id="supprimer" style="width:100%;margin-top:18px;color:var(--ko);border-color:var(--ko)">Supprimer la visite</button>`;
   $('#app').innerHTML=h+`<div class="foot"><div><span class="muted" id="etat" style="flex:1"></span>
   <button class="b" id="recap">Récap Liciel</button><button class="b p" id="envoi">Envoyer au bureau</button></div></div>`;
   majEtat();
@@ -325,6 +326,13 @@ document.addEventListener('click',async e=>{
   if(t.id==='retour'){if(saveTimer)sauver();view='liste';render();return}
   if(t.id==='recap'){view='recap';render();window.scrollTo(0,0);return}
   if(t.id==='versVisite'){view='visite';render();return}
+  if(t.id==='supprimer'){
+    const avert=v.statut==='brouillon'?'\n\n⚠️ Attention : cette visite n\'a pas encore été envoyée au bureau.':'';
+    if(!confirm(`Supprimer définitivement la visite « ${v.client||'Sans nom'} » ?${avert}`))return;
+    clearTimeout(saveTimer);saveTimer=null;
+    visites=visites.filter(x=>x.id!==v.id);
+    try{localStorage.setItem(CLE,JSON.stringify(visites))}catch(err){}
+    view='liste';render();window.scrollTo(0,0);toast('Visite supprimée');return}
   if(t.id==='copier'){try{await navigator.clipboard.writeText(texteLiciel());toast('Texte copié')}catch(err){toast('Copie refusée : sélectionne le texte')}return}
   if(t.id==='envoi'){const all=Object.values(manques()).flat(),lien=`<a class="b wa" id="waEnvoi" href="${lienWa(texteLiciel())}">${all.length?'Envoyer quand même sur WhatsApp':'Envoyer au bureau sur WhatsApp'}</a>`;
     $('#manq').innerHTML=all.length?`<div class="err"><b style="font-weight:500">${all.length} info${all.length>1?'s':''} manquante${all.length>1?'s':''}</b><br>${all.map(esc).join('<br>')}
