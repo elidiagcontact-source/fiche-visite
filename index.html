@@ -327,8 +327,7 @@ document.addEventListener('click',async e=>{
   if(t.id==='versVisite'){view='visite';render();return}
   if(t.dataset.suppr){
     const x=visites.find(y=>y.id===t.dataset.suppr);
-    const avert=x.statut==='brouillon'?'\n\n⚠️ Attention : cette visite n\'a pas encore été envoyée au bureau.':'';
-    if(!confirm(`Supprimer définitivement la visite « ${x.client||'Sans nom'} » ?${avert}`))return;
+    if(!confirm(`Es-tu sûr de vouloir supprimer la visite « ${x.client||'Sans nom'} » ?`))return;
     visites=visites.filter(y=>y!==x);
     try{localStorage.setItem(CLE,JSON.stringify(visites))}catch(err){}
     render();toast('Visite supprimée');return}

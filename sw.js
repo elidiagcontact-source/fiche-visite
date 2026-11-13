@@ -1,6 +1,6 @@
 // Garde la fiche sur le téléphone pour l'ouvrir sans réseau.
 // Changer le numéro de version à chaque modification de la fiche.
-const CACHE = 'fiche-visite-v3';
+const CACHE = 'fiche-visite-v4';
 const FICHIERS = ['./', 'index.html', 'manifest.webmanifest', 'icone-192.png', 'icone-512.png', 'apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
